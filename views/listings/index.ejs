@@ -1,0 +1,236 @@
+<% layout("/layouts/boilerplate") %>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css"
+/>
+
+<style>
+  .filters-bar {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .arrow-btn {
+    font-size: 1.3rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
+  .arrow-btn:disabled {
+    color: gray;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .filters-scroll {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    flex-grow: 1;
+  }
+
+  .filters-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  #filters {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .filter {
+    text-align: center;
+    opacity: 0.7;
+    min-width: 80px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+  }
+
+  .filter:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  .filter i {
+    font-size: 1.2rem;
+  }
+
+  .filter p {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .tax-toggle {
+    border: 1px solid black;
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    white-space: nowrap;
+    margin-left: 2rem;
+  }
+
+  .tax-info {
+    display: none;
+  }
+</style>
+
+<!-- FILTER BAR -->
+<div class="container">
+  <div class="filters-bar">
+    <button class="arrow-btn" id="leftArrow">
+      <i class="fa-solid fa-angle-left fa-beat"></i>
+    </button>
+
+    <div class="filters-scroll" id="filterScroll">
+      <div id="filters">
+        <div class="filter">
+          <i class="fa-solid fa-fire"></i>
+          <p>Trending</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-bed"></i>
+          <p>Rooms</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-mountain-city"></i>
+          <p>Iconic Cities</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-mountain"></i>
+          <p>Mountains</p>
+        </div>
+        <div class="filter">
+          <i class="fa-brands fa-fort-awesome"></i>
+          <p>Castles</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-person-swimming"></i>
+          <p>Amazing Pools</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-campground"></i>
+          <p>Camping</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-cow"></i>
+          <p>Farms</p>
+        </div>
+        <div class="filter">
+          <i class="fa-regular fa-snowflake"></i>
+          <p>Arctic</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-umbrella-beach"></i>
+          <p>Beach</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-mug-saucer"></i>
+          <p>Bed & Breakfast</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-igloo"></i>
+          <p>Domes</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-person-skiing"></i>
+          <p>Skiing</p>
+        </div>
+        <div class="filter">
+          <i class="fa-solid fa-ship"></i>
+          <p>Boats</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="arrow-btn" id="rightArrow">
+      <i class="fa-solid fa-angle-right fa-beat"></i>
+    </button>
+
+    <div class="tax-toggle">
+      <div class="form-check-reverse form-switch mb-0">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="SwitchCheckDefault"
+        />
+        <label class="form-check-label" for="SwitchCheckDefault"
+          >Display total after taxes</label
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LISTINGS -->
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
+  <% for(let listing of allListings) { %>
+  <a href="/listings/<%= listing._id %>" class="listing-link">
+    <div class="card col listing-card">
+      <img
+        src="<%= listing.image.url || listing.image %>"
+        class="card-img-top"
+        alt="listing_image"
+        style="height: 20rem"
+      />
+      <div class="card-img-overlay"></div>
+      <div class="card-body">
+        <p class="card-text">
+          <b><%= listing.title %></b><br />
+          ₹ <%= listing.price.toLocaleString("en-IN") %> / night
+          <i class="tax-info">&nbsp;&nbsp;+18% GST</i>
+        </p>
+      </div>
+    </div>
+  </a>
+  <% } %>
+</div>
+
+<!-- SCRIPT -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const scrollEl = document.getElementById("filterScroll");
+    const leftArrow = document.getElementById("leftArrow");
+    const rightArrow = document.getElementById("rightArrow");
+
+    function updateArrowState() {
+      leftArrow.disabled = scrollEl.scrollLeft <= 0;
+      const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
+      rightArrow.disabled = scrollEl.scrollLeft >= maxScroll - 5;
+    }
+
+    function scrollLeft() {
+      scrollEl.scrollBy({ left: -200, behavior: "smooth" });
+      setTimeout(updateArrowState, 300);
+    }
+
+    function scrollRight() {
+      scrollEl.scrollBy({ left: 200, behavior: "smooth" });
+      setTimeout(updateArrowState, 300);
+    }
+
+    scrollEl.addEventListener("scroll", updateArrowState);
+    leftArrow.addEventListener("click", scrollLeft);
+    rightArrow.addEventListener("click", scrollRight);
+    updateArrowState();
+
+    // Tax toggle
+    const taxSwitch = document.getElementById("SwitchCheckDefault");
+    taxSwitch.addEventListener("change", () => {
+      const taxInfo = document.getElementsByClassName("tax-info");
+      for (const info of taxInfo) {
+        info.style.display = taxSwitch.checked ? "inline" : "none";
+      }
+    });
+  });
+</script>
