@@ -128,13 +128,15 @@
           ></p>
           <p class="card-text"><%= review.comment %></p>
         </div>
-        <form
-          class="mb-3"
-          action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
-          method="POST"
-        >
-          <button class="btn btn-sm btn-dark">Delete</button>
-        </form>
+        <% if (currentUser && review.author._id.toString() === currentUser._id.toString()) { %>
+          <form
+            class="mb-3"
+            action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+            method="POST"
+          >
+            <button class="btn btn-sm btn-dark">Delete</button>
+          </form>
+        <% } %>
       </div>
       <% } %>
     </div>
